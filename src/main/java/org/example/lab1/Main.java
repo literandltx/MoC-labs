@@ -27,13 +27,13 @@ public class Main {
         double averageLossesDDF = averageLosses(probMC, lossFuncDDF(DDF));
         double averageLossesSDF = averageLosses(probMC, lossFuncSDF(SDF));
 
-        showList(probC);
-        showTable(probMC, 4);
-        showTable(probMifC, 4);
-        showList(DDF);
-        showTable(SDF, 4);
-        System.out.println(averageLossesDDF);
-        System.out.println(averageLossesSDF);
+//        showList(probC, 4);
+//        showTable(probMC, 4);
+//        showTable(probMifC, 4);
+//        showList(DDF);
+//        showTable(SDF, 4);
+//        System.out.println("oDDF: " + averageLossesDDF);
+//        System.out.println("oSDF: " + averageLossesSDF);
     }
 
     // P(C) Method to calculate cipher text probabilities
@@ -116,16 +116,16 @@ public class Main {
         final int n = probMIfC.size();
         final List<Double> result = new ArrayList<>(n);
 
-        for (int c = 0; c < n; c++) {
+        for (int i = 0; i < n; i++) {
             double optimalM = 0;
-            double maxProb = probMIfC.getFirst().get(c);
+            double maxProb = probMIfC.getFirst().get(i);
 
-            for (int m = 1; m < n; m++) {
-                final double currentProb = probMIfC.get(m).get(c);
+            for (int j = 1; j < n; j++) {
+                final double currentProb = probMIfC.get(j).get(i);
 
                 if (currentProb > maxProb) {
                     maxProb = currentProb;
-                    optimalM = m;
+                    optimalM = j;
                 }
             }
 
@@ -145,24 +145,24 @@ public class Main {
             result.add(new ArrayList<>(Collections.nCopies(n, 0.0)));
         }
 
-        for (int c = 0; c < n; c++) {
+        for (int i = 0; i < n; i++) {
             final List<Integer> maxProbIds = new ArrayList<>();
-            double maxProb = probMIfC.getFirst().get(c);
+            double maxProb = probMIfC.getFirst().get(i);
 
-            for (int m = 0; m < n; m++) {
-                final double currentProb = probMIfC.get(m).get(c);
+            for (int j = 0; j < n; j++) {
+                final double currentProb = probMIfC.get(j).get(i);
                 if (currentProb > maxProb) {
                     maxProb = currentProb;
                     maxProbIds.clear();
-                    maxProbIds.add(m);
+                    maxProbIds.add(j);
                 } else if (currentProb == maxProb) {
-                    maxProbIds.add(m);
+                    maxProbIds.add(j);
                 }
             }
 
             final double coef = 1.0 / maxProbIds.size();
             for (int id : maxProbIds) {
-                result.get(c).set(id, coef);
+                result.get(i).set(id, coef);
             }
         }
 

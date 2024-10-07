@@ -11,6 +11,11 @@ public class ConsoleUtil {
         list.forEach(System.out::println);
     }
 
+    public static void showList(List<Double> list, int decimalPlaces) {
+        DecimalFormat df = new DecimalFormat("0." + "0".repeat(decimalPlaces));
+        list.forEach(value -> System.out.println(df.format(value)));
+    }
+
     public static void showTable(Collection<?> data, int decimalPlaces) {
         if (data == null || data.isEmpty()) {
             System.out.println("No data to display.");
