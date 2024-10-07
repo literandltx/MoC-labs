@@ -19,17 +19,21 @@ public class Main {
         List<Double> plainTextProbabilities = readLineFromCsvFile(plainTextPath, 0);
         List<Double> keysProbabilities = readLineFromCsvFile(plainTextPath, 1);
 
-        List<Double> C = findCipherTextProbability(plainTextProbabilities, keysProbabilities, cipherTextTable);
-        List<List<Double>> MC = findOpenTextCipherTextProbability(plainTextProbabilities, keysProbabilities, cipherTextTable);
-        List<List<Double>> MifC = findOpenTextIfCiphertextProbability(MC, C);
-        List<Integer> DDF = findOptimalDeterministicDecisionFunction(MifC);
-        List<List<Double>> SDF = findOptimalStochasticDecisionFunction(MifC);
+        List<Double> probC = findCipherTextProbability(plainTextProbabilities, keysProbabilities, cipherTextTable);
+        List<List<Double>> probMC = findOpenTextCipherTextProbability(plainTextProbabilities, keysProbabilities, cipherTextTable);
+        List<List<Double>> probMifC = findOpenTextIfCiphertextProbability(probMC, probC);
+        List<Double> DDF = findOptimalDeterministicDecisionFunction(probMifC);
+        List<List<Double>> SDF = findOptimalStochasticDecisionFunction(probMifC);
+        double averageLossesDDF = averageLosses(probMC, lossFuncDDF(DDF));
+        double averageLossesSDF = averageLosses(probMC, lossFuncSDF(SDF));
 
-//        showList(C);
-//        showTable(MC, 4);
-//        showTable(MifC, 4);
-//        showList(DDF);
-//        showTable(SDF, 4);
+        showList(probC);
+        showTable(probMC, 4);
+        showTable(probMifC, 4);
+        showList(DDF);
+        showTable(SDF, 4);
+        System.out.println(averageLossesDDF);
+        System.out.println(averageLossesSDF);
     }
 
     // P(C) Method to calculate cipher text probabilities
@@ -106,14 +110,14 @@ public class Main {
         return prob;
     }
 
-    public static List<Integer> findOptimalDeterministicDecisionFunction(
+    public static List<Double> findOptimalDeterministicDecisionFunction(
             final List<List<Double>> probMIfC
     ) {
         final int n = probMIfC.size();
-        final List<Integer> result = new ArrayList<>(n);
+        final List<Double> result = new ArrayList<>(n);
 
         for (int c = 0; c < n; c++) {
-            int optimalM = 0;
+            double optimalM = 0;
             double maxProb = probMIfC.getFirst().get(c);
 
             for (int m = 1; m < n; m++) {
@@ -159,6 +163,73 @@ public class Main {
             final double coef = 1.0 / maxProbIds.size();
             for (int id : maxProbIds) {
                 result.get(c).set(id, coef);
+            }
+        }
+
+        return result;
+    }
+
+    public static double averageLosses(
+            final List<List<Double>> probMC,
+            final List<List<Double>> lsFunc
+    ) {
+        double result = 0;
+
+        for (int i = 0; i < lsFunc.size(); i++) {
+            for (int j = 0; j < lsFunc.size(); j++) {
+                result += probMC.get(i).get(j) * lsFunc.get(i).get(j);
+            }
+        }
+
+        return result;
+    }
+
+    public static List<List<Double>> lossFuncDDF(
+            final List<Double> ddf
+    ) {
+        final List<List<Double>> result = new ArrayList<>();
+
+        for (int i = 0; i < ddf.size(); i++) {
+            final List<Double> row = new ArrayList<>();
+
+            for (int j = 0; j < ddf.size(); j++) {
+                row.add(1.);
+            }
+
+            result.add(row);
+        }
+
+        for (int i = 0; i < ddf.size(); i++) {
+            final double m = ddf.get(i);
+
+            result.get((int) m).set(i, 0.);
+        }
+
+        return result;
+    }
+
+    public static List<List<Double>> lossFuncSDF(
+            List<List<Double>> sdf
+    ) {
+        final List<List<Double>> result = new ArrayList<>();
+
+        for (int i = 0; i < sdf.size(); i++) {
+            final List<Double> row = new ArrayList<>();
+
+            for (int j = 0; j < sdf.size(); j++) {
+                row.add(0.0);
+            }
+
+            result.add(row);
+        }
+
+        for (int i = 0; i < sdf.size(); i++) {
+            for (int j = 0; j < sdf.size(); j++) {
+                for (int k = 0; k < sdf.size(); k++) {
+                    if (k != j) {
+                        result.get(j).set(i, result.get(j).get(i) + sdf.get(i).get(k));
+                    }
+                }
             }
         }
 
