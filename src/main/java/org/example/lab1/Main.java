@@ -2,7 +2,6 @@ package org.example.lab1;
 
 import java.util.*;
 
-import static org.example.lab1.util.ConsoleUtil.showList;
 import static org.example.lab1.util.ConsoleUtil.showTable;
 import static org.example.lab1.util.CsvFileUtil.readLineFromCsvFile;
 import static org.example.lab1.util.CsvFileUtil.readTableFromCsvFile;
@@ -19,10 +18,10 @@ public class Main {
 
         List<Double> C = findCipherTextProbability(plainTextProbabilities, keysProbabilities, cipherTextTable);
         List<List<Double>> MC = findOpenTextCipherTextProbability(plainTextProbabilities, keysProbabilities, cipherTextTable);
-
+        List<List<Double>> MifC = findOpenTextIfCiphertextProbability(MC, C);
 //        showList(C);
-        showTable(MC, 4);
-
+//        showTable(MC, 4);
+        showTable(MifC, 4);
     }
 
     // P(C) Method to calculate cipher text probabilities
@@ -48,7 +47,7 @@ public class Main {
         return probCiphertext;
     }
 
-    // P(C, M) Method to calculate open text to cipher text probabilities
+    // P(M, C) Method to calculate open text to cipher text probabilities
     public static List<List<Double>> findOpenTextCipherTextProbability(
             List<Double> plain,
             List<Double> key,
@@ -73,5 +72,29 @@ public class Main {
         }
 
         return probTable;
+    }
+
+    // P(M | C) Method to calculate open text probabilities given ciphertext probabilities
+    public static List<List<Double>> findOpenTextIfCiphertextProbability(
+            final List<List<Double>> MC,
+            final List<Double> C
+    ) {
+        final int n = MC.size();
+        final List<List<Double>> prob = new ArrayList<>();
+
+        for (int i = 0; i < n; i++) {
+            final List<Double> row = new ArrayList<>(Collections.nCopies(n, 0.0));
+            prob.add(row);
+        }
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (C.get(j) != 0) {
+                    prob.get(i).set(j, prob.get(i).get(j) + MC.get(i).get(j) / C.get(j));
+                }
+            }
+        }
+
+        return prob;
     }
 }
