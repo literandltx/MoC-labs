@@ -17,7 +17,7 @@ public class ConsoleUtil {
             return;
         }
 
-        DecimalFormat df = new DecimalFormat("#." + "0".repeat(Math.max(0, decimalPlaces)));
+        DecimalFormat df = new DecimalFormat("0." + "0".repeat(decimalPlaces));
 
         int maxColumnWidth = 0;
         for (Object item : data) {
@@ -32,9 +32,6 @@ public class ConsoleUtil {
                 }
             }
         }
-
-        System.out.println("Table:");
-//        System.out.println("-".repeat(maxColumnWidth * 3));
 
         for (Object item : data) {
             if (item instanceof List<?> list) {
