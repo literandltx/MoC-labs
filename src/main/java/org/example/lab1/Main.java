@@ -1,7 +1,10 @@
 package org.example.lab1;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
+import static org.example.lab1.util.ConsoleUtil.showList;
 import static org.example.lab1.util.ConsoleUtil.showTable;
 import static org.example.lab1.util.CsvFileUtil.readLineFromCsvFile;
 import static org.example.lab1.util.CsvFileUtil.readTableFromCsvFile;
@@ -19,9 +22,12 @@ public class Main {
         List<Double> C = findCipherTextProbability(plainTextProbabilities, keysProbabilities, cipherTextTable);
         List<List<Double>> MC = findOpenTextCipherTextProbability(plainTextProbabilities, keysProbabilities, cipherTextTable);
         List<List<Double>> MifC = findOpenTextIfCiphertextProbability(MC, C);
+        List<Integer> det = findOptimalDeterministicDecisionFunction(MifC);
+
 //        showList(C);
 //        showTable(MC, 4);
         showTable(MifC, 4);
+        showList(det);
     }
 
     // P(C) Method to calculate cipher text probabilities
@@ -96,5 +102,30 @@ public class Main {
         }
 
         return prob;
+    }
+
+    public static List<Integer> findOptimalDeterministicDecisionFunction(
+            final List<List<Double>> probMIfC
+    ) {
+        final int n = probMIfC.size();
+        final List<Integer> result = new ArrayList<>(n);
+
+        for (int c = 0; c < n; c++) {
+            int optimalM = 0;
+            double maxProb = probMIfC.getFirst().get(c);
+
+            for (int m = 1; m < n; m++) {
+                final double currentProb = probMIfC.get(m).get(c);
+
+                if (currentProb > maxProb) {
+                    maxProb = currentProb;
+                    optimalM = m;
+                }
+            }
+
+            result.add(optimalM);
+        }
+
+        return result;
     }
 }
