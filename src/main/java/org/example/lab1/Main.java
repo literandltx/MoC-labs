@@ -22,12 +22,14 @@ public class Main {
         List<Double> C = findCipherTextProbability(plainTextProbabilities, keysProbabilities, cipherTextTable);
         List<List<Double>> MC = findOpenTextCipherTextProbability(plainTextProbabilities, keysProbabilities, cipherTextTable);
         List<List<Double>> MifC = findOpenTextIfCiphertextProbability(MC, C);
-        List<Integer> det = findOptimalDeterministicDecisionFunction(MifC);
+        List<Integer> DDF = findOptimalDeterministicDecisionFunction(MifC);
+        List<List<Double>> SDF = findOptimalStochasticDecisionFunction(MifC);
 
 //        showList(C);
 //        showTable(MC, 4);
-        showTable(MifC, 4);
-        showList(det);
+//        showTable(MifC, 4);
+//        showList(DDF);
+//        showTable(SDF, 4);
     }
 
     // P(C) Method to calculate cipher text probabilities
@@ -124,6 +126,40 @@ public class Main {
             }
 
             result.add(optimalM);
+        }
+
+        return result;
+    }
+
+    public static List<List<Double>> findOptimalStochasticDecisionFunction(
+            final List<List<Double>> probMIfC
+    ) {
+        final int n = probMIfC.size();
+        final List<List<Double>> result = new ArrayList<>(n);
+
+        for (int c = 0; c < n; c++) {
+            result.add(new ArrayList<>(Collections.nCopies(n, 0.0)));
+        }
+
+        for (int c = 0; c < n; c++) {
+            final List<Integer> maxProbIds = new ArrayList<>();
+            double maxProb = probMIfC.get(0).get(c);
+
+            for (int m = 0; m < n; m++) {
+                final double currentProb = probMIfC.get(m).get(c);
+                if (currentProb > maxProb) {
+                    maxProb = currentProb;
+                    maxProbIds.clear();
+                    maxProbIds.add(m);
+                } else if (currentProb == maxProb) {
+                    maxProbIds.add(m);
+                }
+            }
+
+            final double coef = 1.0 / maxProbIds.size();
+            for (int id : maxProbIds) {
+                result.get(c).set(id, coef);
+            }
         }
 
         return result;
