@@ -143,7 +143,7 @@ public class Main {
 
         for (int c = 0; c < n; c++) {
             final List<Integer> maxProbIds = new ArrayList<>();
-            double maxProb = probMIfC.get(0).get(c);
+            double maxProb = probMIfC.getFirst().get(c);
 
             for (int m = 0; m < n; m++) {
                 final double currentProb = probMIfC.get(m).get(c);
