@@ -27,29 +27,29 @@ public class Main {
         double averageLossesDDF = averageLosses(probMC, lossFuncDDF(DDF));
         double averageLossesSDF = averageLosses(probMC, lossFuncSDF(SDF));
 
-//        showList(probC, 4);
-//        showTable(probMC, 4);
-//        showTable(probMifC, 4);
-//        showList(DDF);
-//        showTable(SDF, 4);
-//        System.out.println("oDDF: " + averageLossesDDF);
-//        System.out.println("oSDF: " + averageLossesSDF);
+        showList(probC, 4);
+        showTable(probMC, 4);
+        showTable(probMifC, 4);
+        showList(DDF);
+        showTable(SDF, 4);
+        System.out.println("oDDF: " + averageLossesDDF);
+        System.out.println("oSDF: " + averageLossesSDF);
     }
 
     // P(C) Method to calculate cipher text probabilities
     public static List<Double> findCipherTextProbability(
-            List<Double> plain,
-            List<Double> key,
-            List<double[]> cipherTable
+            final List<Double> pM,
+            final List<Double> pK,
+            final List<double[]> cipherTable
     ) {
-        final int n = plain.size();
-        final int m = key.size();
+        final int n = pM.size();
+        final int m = pK.size();
         final List<Double> probCiphertext = new ArrayList<>(Collections.nCopies(n, 0.0));
 
         for (int i = 0; i < n; i++) {
-            final double pMi = plain.get(i);
+            final double pMi = pM.get(i);
             for (int j = 0; j < m; j++) {
-                final double pKj = key.get(j);
+                final double pKj = pK.get(j);
                 final int c = (int) cipherTable.get(j)[i];
 
                 probCiphertext.set(c, probCiphertext.get(c) + pKj * pMi);
@@ -61,12 +61,12 @@ public class Main {
 
     // P(M, C) Method to calculate open text to cipher text probabilities
     public static List<List<Double>> findOpenTextCipherTextProbability(
-            List<Double> plain,
-            List<Double> key,
+            List<Double> pM,
+            List<Double> pK,
             List<double[]> cipherTable
     ) {
-        final int n = plain.size();
-        final int m = key.size();
+        final int n = pM.size();
+        final int m = pK.size();
         final List<List<Double>> probTable = new ArrayList<>();
 
         for (int i = 0; i < n; i++) {
@@ -74,9 +74,9 @@ public class Main {
         }
 
         for (int i = 0; i < n; i++) {
-            final double pMi = plain.get(i);
+            final double pMi = pM.get(i);
             for (int j = 0; j < m; j++) {
-                final double pKj = key.get(j);
+                final double pKj = pK.get(j);
                 final int c = (int) cipherTable.get(j)[i];
 
                 probTable.get(i).set(c, probTable.get(i).get(c) + pKj * pMi);
@@ -88,10 +88,10 @@ public class Main {
 
     // P(M | C) Method to calculate open text probabilities given ciphertext probabilities
     public static List<List<Double>> findOpenTextIfCiphertextProbability(
-            final List<List<Double>> MC,
-            final List<Double> C
+            final List<List<Double>> pMC,
+            final List<Double> pC
     ) {
-        final int n = MC.size();
+        final int n = pMC.size();
         final List<List<Double>> prob = new ArrayList<>();
 
         for (int i = 0; i < n; i++) {
@@ -101,8 +101,8 @@ public class Main {
 
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                if (C.get(j) != 0) {
-                    prob.get(i).set(j, prob.get(i).get(j) + MC.get(i).get(j) / C.get(j));
+                if (pC.get(j) != 0) {
+                    prob.get(i).set(j, prob.get(i).get(j) + pMC.get(i).get(j) / pC.get(j));
                 }
             }
         }
@@ -111,17 +111,17 @@ public class Main {
     }
 
     public static List<Double> findOptimalDeterministicDecisionFunction(
-            final List<List<Double>> probMIfC
+            final List<List<Double>> pMifC
     ) {
-        final int n = probMIfC.size();
+        final int n = pMifC.size();
         final List<Double> result = new ArrayList<>(n);
 
         for (int i = 0; i < n; i++) {
             double optimalM = 0;
-            double maxProb = probMIfC.getFirst().get(i);
+            double maxProb = pMifC.getFirst().get(i);
 
             for (int j = 1; j < n; j++) {
-                final double currentProb = probMIfC.get(j).get(i);
+                final double currentProb = pMifC.get(j).get(i);
 
                 if (currentProb > maxProb) {
                     maxProb = currentProb;
@@ -136,9 +136,9 @@ public class Main {
     }
 
     public static List<List<Double>> findOptimalStochasticDecisionFunction(
-            final List<List<Double>> probMIfC
+            final List<List<Double>> pMifC
     ) {
-        final int n = probMIfC.size();
+        final int n = pMifC.size();
         final List<List<Double>> result = new ArrayList<>(n);
 
         for (int c = 0; c < n; c++) {
@@ -147,10 +147,10 @@ public class Main {
 
         for (int i = 0; i < n; i++) {
             final List<Integer> maxProbIds = new ArrayList<>();
-            double maxProb = probMIfC.getFirst().get(i);
+            double maxProb = pMifC.getFirst().get(i);
 
             for (int j = 0; j < n; j++) {
-                final double currentProb = probMIfC.get(j).get(i);
+                final double currentProb = pMifC.get(j).get(i);
                 if (currentProb > maxProb) {
                     maxProb = currentProb;
                     maxProbIds.clear();
@@ -170,14 +170,14 @@ public class Main {
     }
 
     public static double averageLosses(
-            final List<List<Double>> probMC,
+            final List<List<Double>> pMC,
             final List<List<Double>> lsFunc
     ) {
         double result = 0;
 
         for (int i = 0; i < lsFunc.size(); i++) {
             for (int j = 0; j < lsFunc.size(); j++) {
-                result += probMC.get(i).get(j) * lsFunc.get(i).get(j);
+                result += pMC.get(i).get(j) * lsFunc.get(i).get(j);
             }
         }
 
