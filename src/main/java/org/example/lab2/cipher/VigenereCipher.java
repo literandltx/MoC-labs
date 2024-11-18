@@ -3,7 +3,7 @@ package org.example.lab2.cipher;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Cipher {
+public class VigenereCipher {
     public static ArrayList<String> vigenere(final List<String> text, final String key) {
         final ArrayList<String> result = new ArrayList<>();
 
