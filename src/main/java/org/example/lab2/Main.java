@@ -2,8 +2,7 @@ package org.example.lab2;
 
 import java.util.Map;
 
-import static org.example.EntropyHelper.entropyNGram;
-import static org.example.lab2.util.ConsoleUtil.displayFrequencies;
+import static org.example.lab2.EntropyAnalyzer.entropyNGram;
 import static org.example.lab2.BigramFrequencyAnalyzer.*;
 import static org.example.lab2.LetterFrequencyAnalyzer.*;
 import static org.example.lab2.util.FileUtils.readFile;

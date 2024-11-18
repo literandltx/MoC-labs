@@ -20,12 +20,15 @@ public class LetterFrequencyAnalyzer {
     public static Map<Character, Double> getNormalizeLetterFrequencies(final Map<Character, Integer> letterFrequencies) {
         final Map<Character, Double> normalizedFrequencies = new HashMap<>();
 
-        int totalLetters = letterFrequencies.values().stream().mapToInt(Integer::intValue).sum();
+        int totalLetters = letterFrequencies.values().stream()
+                .mapToInt(Integer::intValue)
+                .sum();
 
         for (Map.Entry<Character, Integer> entry : letterFrequencies.entrySet()) {
-            char letter = entry.getKey();
-            int count = entry.getValue();
-            double normalizedFrequency = (double) count / totalLetters;
+            final char letter = entry.getKey();
+            final int count = entry.getValue();
+            final double normalizedFrequency = (double) count / totalLetters;
+
             normalizedFrequencies.put(letter, normalizedFrequency);
         }
 
