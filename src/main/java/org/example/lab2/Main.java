@@ -3,7 +3,10 @@ package org.example.lab2;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.example.lab2.cipher.AffineCipher.*;
+import static org.example.lab2.cipher.VigenereCipher.vigenere;
 import static org.example.lab2.util.FileUtils.readFile;
+import static org.example.lab2.util.TextUtils.getSequentialSubstrings;
 import static org.example.lab2.util.TextUtils.processText;
 
 public class Main {
@@ -27,11 +30,13 @@ public class Main {
 //        System.out.println(entropyNGram(normalizeLetterFrequencies, 1));
 //        System.out.println(entropyNGram(normalizeBigramFrequencies, 2));
 
-//        List<String> subText = getSequentialSubstrings(text, X, L);
-//        ArrayList<String> vigenere = vigenere(subText, "secretsecretkeyword");
+        List<String> list = new ArrayList<>(List.of("суперпупертекст"));
 
-//        ArrayList<String> list = new ArrayList<>(List.of("text_text_text"));
-//        ArrayList<String> affine = affine(list, "3", "4", 1);
+//        List<String> subText = getSequentialSubstrings(text, X, L);
+//        ArrayList<String> vigenere = vigenere(list, "пароль");
+//        System.out.println(vigenere);
+
+//        List<String> affine = affine(list, 5, 7, 2);
 //        System.out.println(affine);
     }
 }

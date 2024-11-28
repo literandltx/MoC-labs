@@ -4,26 +4,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VigenereCipher {
+    private static final String ALPHABET = "абвгдеєжзиіїйклмнопрстуфхцчшщьюя";
+
     public static ArrayList<String> vigenere(final List<String> text, final String key) {
         final ArrayList<String> result = new ArrayList<>();
 
-        for (String line : text) {
-            StringBuilder encryptedLine = new StringBuilder();
+        for (final String line : text) {
+            final StringBuilder encryptedLine = new StringBuilder();
             int keyIndex = 0;
 
             for (int i = 0; i < line.length(); i++) {
-                char currentChar = line.charAt(i);
+                final char currentChar = Character.toLowerCase(line.charAt(i));
 
                 if (Character.isLetter(currentChar)) {
-                    boolean isUpperCase = Character.isUpperCase(currentChar);
-                    char base = isUpperCase ? 'A' : 'a';
+                    final int baseIndex = ALPHABET.indexOf(currentChar);
 
-                    char keyChar = key.charAt(keyIndex % key.length());
-                    int shift = Character.toUpperCase(keyChar) - 'A';
+                    if (baseIndex == -1) {
+                        encryptedLine.append(currentChar);
+                        continue;
+                    }
 
-                    char encryptedChar = (char) ((currentChar - base + shift) % 26 + base);
+                    final char keyChar = key.charAt(keyIndex % key.length());
+                    final int shift = ALPHABET.indexOf(Character.toLowerCase(keyChar));
+
+                    final char encryptedChar = ALPHABET.charAt((baseIndex + shift) % ALPHABET.length());
+
                     encryptedLine.append(encryptedChar);
-
                     keyIndex++;
                 } else {
                     encryptedLine.append(currentChar);
@@ -35,5 +41,4 @@ public class VigenereCipher {
 
         return result;
     }
-
 }
