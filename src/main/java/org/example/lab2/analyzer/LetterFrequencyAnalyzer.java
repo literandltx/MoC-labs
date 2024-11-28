@@ -2,6 +2,7 @@ package org.example.lab2.analyzer;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class LetterFrequencyAnalyzer {
     public static Map<Character, Integer> getLetterFrequencies(final String text) {
@@ -10,6 +11,7 @@ public class LetterFrequencyAnalyzer {
         for (char c : text.toCharArray()) {
             if (Character.isLetter(c)) {
                 c = Character.toLowerCase(c);
+
                 frequencies.put(c, frequencies.getOrDefault(c, 0) + 1);
             }
         }
@@ -20,7 +22,7 @@ public class LetterFrequencyAnalyzer {
     public static Map<Character, Double> getNormalizeLetterFrequencies(final Map<Character, Integer> letterFrequencies) {
         final Map<Character, Double> normalizedFrequencies = new HashMap<>();
 
-        int totalLetters = letterFrequencies.values().stream()
+        final int totalLetters = letterFrequencies.values().stream()
                 .mapToInt(Integer::intValue)
                 .sum();
 
@@ -34,4 +36,17 @@ public class LetterFrequencyAnalyzer {
 
         return normalizedFrequencies;
     }
+
+    public static Map<Character, Integer> getPopularLetterFrequencies(final String text, final int limit) {
+        return getLetterFrequencies(text).entrySet().stream()
+                .filter(entry -> entry.getValue() > limit)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    public static Map<Character, Integer> getNonePopularLetterFrequencies(final String text, final int limit) {
+        return getLetterFrequencies(text).entrySet().stream()
+                .filter(entry -> entry.getValue() < limit)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
 }
