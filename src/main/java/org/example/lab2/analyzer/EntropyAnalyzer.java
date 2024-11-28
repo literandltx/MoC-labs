@@ -1,4 +1,4 @@
-package org.example.lab2;
+package org.example.lab2.analyzer;
 
 import java.util.Map;
 
