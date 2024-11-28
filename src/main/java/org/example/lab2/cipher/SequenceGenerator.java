@@ -44,31 +44,32 @@ public class SequenceGenerator {
         return result;
     }
 
-    public static List<String> generateCorrelationSequence(int L, int N, int deg) {
+    public static List<String> generateCorrelationSequence(int L, int N, int exp) {
         final List<String> result = new ArrayList<>();
 
-        if (deg == 1) {
+        if (exp == 1) {
             for (int i = 0; i < N; i++) {
                 final StringBuilder stringBuilder = new StringBuilder();
 
                 int s0 = secureRandom.nextInt(32);
                 int s1 = secureRandom.nextInt(32);
-                int sTemp = (s0 + s1) % 32;
+                int s = (s0 + s1) % 32;
 
-                stringBuilder.append(ALPHABET.charAt(sTemp));
+                stringBuilder.append(ALPHABET.charAt(s));
 
                 for (int j = 1; j < L; j++) {
                     s0 = s1;
-                    s1 = sTemp;
-                    sTemp = (s0 + s1) % 32;
-                    stringBuilder.append(ALPHABET.charAt(sTemp));
+                    s1 = s;
+                    s = (s0 + s1) % 32;
+
+                    stringBuilder.append(ALPHABET.charAt(s));
                 }
 
                 result.add(stringBuilder.toString());
             }
         }
 
-        if (deg == 2) {
+        if (exp == 2) {
             for (int i = 0; i < N; i++) {
                 final StringBuilder stringBuilder = new StringBuilder();
 
