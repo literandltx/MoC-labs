@@ -3,10 +3,10 @@ package org.example.lab2.cipher;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AffineCipher {
-    private static final String ALPHABET = "абвгдеєжзиіїйклмнопрстуфхцчшщьюя";
-    private static final List<String> BIGRAM_ALPHABET = createBigramAlphabet();
+import static org.example.lab2.Main.ALPHABET;
+import static org.example.lab2.Main.BIGRAM_ALPHABET;
 
+public class AffineCipher {
     public static List<String> affine(
             final List<String> text,
             final int a,
@@ -33,7 +33,6 @@ public class AffineCipher {
         }
 
         if (exp == 2) {
-            final List<String> allBi = createBigramAlphabet();
             int term;
 
             for (String x : text) {
@@ -47,7 +46,7 @@ public class AffineCipher {
                         term = ALPHABET.length() + term;
                     }
 
-                    temp.append(allBi.get(term));
+                    temp.append(BIGRAM_ALPHABET.get(term));
                 }
 
                 result.add(temp.toString());
@@ -63,18 +62,6 @@ public class AffineCipher {
 
     private static int searchBigram(final String bigram) {
         return BIGRAM_ALPHABET.indexOf(bigram);
-    }
-
-    private static List<String> createBigramAlphabet() {
-        final List<String> allBi = new ArrayList<>(ALPHABET.length() * ALPHABET.length());
-
-        for (int i = 0; i < ALPHABET.length(); i++) {
-            for (int j = 0; j < ALPHABET.length(); j++) {
-                allBi.add(String.valueOf(ALPHABET.charAt(i)) + ALPHABET.charAt(j));
-            }
-        }
-
-        return allBi;
     }
 
 }

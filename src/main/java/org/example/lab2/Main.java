@@ -1,5 +1,7 @@
 package org.example.lab2;
 
+import org.example.lab2.cipher.SequenceGenerator;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +13,21 @@ import static org.example.lab2.util.TextUtils.processText;
 
 public class Main {
     private static final String filePath = "src/main/java/org/example/lab2/data/Zapiski_ykrajnskogo_samashedshogo.txt";
+
+    public static final String ALPHABET = "абвгдеєжзиіїйклмнопрстуфхцчшщьюя";
+    public static final List<String> BIGRAM_ALPHABET = createBigramAlphabet();
+
+    private static List<String> createBigramAlphabet() {
+        final List<String> allBi = new ArrayList<>(ALPHABET.length() * ALPHABET.length());
+
+        for (int i = 0; i < ALPHABET.length(); i++) {
+            for (int j = 0; j < ALPHABET.length(); j++) {
+                allBi.add(String.valueOf(ALPHABET.charAt(i)) + ALPHABET.charAt(j));
+            }
+        }
+
+        return allBi;
+    }
 
     public static void main(String[] args) {
         // init
@@ -32,11 +49,17 @@ public class Main {
 
         List<String> list = new ArrayList<>(List.of("суперпупертекст"));
 
+//        2.0, 2.2, 2.2, 2.3, 4.0, 5.0
 //        List<String> subText = getSequentialSubstrings(text, X, L);
 //        ArrayList<String> vigenere = vigenere(list, "пароль");
 //        System.out.println(vigenere);
 
 //        List<String> affine = affine(list, 5, 7, 2);
 //        System.out.println(affine);
+
+//        List<String> sequence = SequenceGenerator.generatedSequence(L, 1, 1);
+//        List<String> correlationSequence = SequenceGenerator.generateCorrelationSequence(L, 1, 1);
+//        System.out.println(sequence);
+//        System.out.println(correlationSequence);
     }
 }
