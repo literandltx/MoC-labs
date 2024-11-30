@@ -49,7 +49,7 @@ public class Main {
 
         List<String> list = new ArrayList<>(List.of("суперпупертекст"));
 
-//        2.0, 2.2, 2.2, 2.3, 4.0, 5.0
+//        2.0, 2.1, 2.2, 2.3, 4.0, 5.0
 //        List<String> subText = getSequentialSubstrings(text, X, L);
 //        ArrayList<String> vigenere = vigenere(list, "пароль");
 //        System.out.println(vigenere);
