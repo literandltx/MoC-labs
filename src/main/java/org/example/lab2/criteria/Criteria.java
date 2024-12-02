@@ -1,7 +1,7 @@
 package org.example.lab2.criteria;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static java.lang.Math.abs;
@@ -9,15 +9,20 @@ import static org.example.lab2.analyzer.BigramFrequencyAnalyzer.getPopularBigram
 import static org.example.lab2.analyzer.LetterFrequencyAnalyzer.getPopularLetterFrequencies;
 
 public class Criteria {
-    private static final int letterLimit = 10000;
-    private static final int bigramLimit = 10;
+    private static final int criteriaZeroLetterLimit = 1;
+    private static final int criteriaZeroBigramLimit = 1;
 
-    public static int criteriaZero(final ArrayList<String> texts, final String mainText, final int exp, final int FFPP) {
+    private static final int criteriaFirstLetterLimit = 1;
+    private static final int criteriaFirstBigramLimit = 1;
+    private static final int criteriaFirstLetterKf = 3;
+    private static final int criteriaFirstBigramKf = 200;
+
+    public static int criteriaZero(final List<String> texts, final String mainText, final int exp, final int FP) {
         int trueCounter = 0;
         int falseCounter = 0;
 
         if (exp == 1) {
-            final Map<Character, Integer> afrq = getPopularLetterFrequencies(mainText, letterLimit);
+            final Map<Character, Integer> afrq = getPopularLetterFrequencies(mainText, criteriaZeroLetterLimit);
 
             for (final String text : texts) {
                 for (int j = 0; j < texts.getFirst().length(); j++) {
@@ -35,10 +40,10 @@ public class Criteria {
         }
 
         if (exp == 2) {
-            final Map<String, Integer> afrq = getPopularBigramFrequencies(mainText, bigramLimit);
+            final Map<String, Integer> afrq = getPopularBigramFrequencies(mainText, criteriaFirstBigramLimit);
 
             for (final String text : texts) {
-                for (int j = 0; j++ < texts.getFirst().length(); j += 2) {
+                for (int j = 0; j++ < texts.getFirst().length() - 2; j += 2) {
                     if (!afrq.containsKey(text.substring(j, j + 2))) {
                         falseCounter++;
                         break;
@@ -52,15 +57,15 @@ public class Criteria {
             }
         }
 
-        return FFPP == 1 ? trueCounter : falseCounter;
+        return FP == 1 ? trueCounter : falseCounter;
     }
 
-    public static int criteriaOne(final ArrayList<String> texts, final String mainText, final int exp, final int FFPP) {
+    public static int criteriaOne(final List<String> texts, final String mainText, final int exp, final int FP) {
         int trueCounter = 0;
         int falseCounter = 0;
 
         if (exp == 1) {
-            final Map<Character, Integer> afrq = getPopularLetterFrequencies(mainText, letterLimit);
+            final Map<Character, Integer> afrq = getPopularLetterFrequencies(mainText, criteriaFirstLetterLimit);
 
             for (final String text : texts) {
                 final Map<Character, Integer> aaf = new HashMap<>();
@@ -73,23 +78,23 @@ public class Criteria {
                     }
                 }
 
-                if (abs(afrq.size() - aaf.size()) <= 3) {
+                if (abs(afrq.size() - aaf.size()) <= criteriaFirstLetterKf) {
                     falseCounter++;
                 }
 
-                if (abs(afrq.size() - aaf.size()) > 3) {
+                if (abs(afrq.size() - aaf.size()) > criteriaFirstLetterKf) {
                     trueCounter++;
                 }
             }
         }
 
         if (exp == 2) {
-            final Map<String, Integer> afrq = getPopularBigramFrequencies(mainText, bigramLimit);
+            final Map<String, Integer> afrq = getPopularBigramFrequencies(mainText, criteriaZeroBigramLimit);
 
             for (final String text : texts) {
                 final HashMap<String, Integer> aaf = new HashMap<>();
 
-                for (int j = 0; j++ < (texts.getFirst()).length(); j += 2) {
+                for (int j = 0; j++ < (texts.getFirst()).length() - 2; j += 2) {
                     final String temp = text.substring(j, j + 2);
 
                     if (afrq.containsKey(temp)) {
@@ -97,24 +102,24 @@ public class Criteria {
                     }
                 }
 
-                if (abs(afrq.size() - aaf.size()) <= 200) {
+                if (abs(afrq.size() - aaf.size()) <= criteriaFirstBigramKf) {
                     falseCounter++;
                 }
 
-                if (abs(afrq.size() - aaf.size()) > 200) {
+                if (abs(afrq.size() - aaf.size()) > criteriaFirstBigramKf) {
                     trueCounter++;
                 }
             }
         }
 
-        return FFPP == 1 ? trueCounter : falseCounter;
+        return FP == 1 ? trueCounter : falseCounter;
     }
 
-    public static int criteriaTwo() {
+    public static int criteriaTwo(final List<String> texts, final String mainText, final int exp, final int FFPP) {
         return 0;
     }
 
-    public static int criteriaThree() {
+    public static int criteriaThree(final List<String> texts, final String mainText, final int exp, final int FFPP) {
         return 0;
     }
 

@@ -7,6 +7,8 @@ import java.util.List;
 
 import static org.example.lab2.cipher.AffineCipher.*;
 import static org.example.lab2.cipher.VigenereCipher.vigenere;
+import static org.example.lab2.criteria.Criteria.criteriaOne;
+import static org.example.lab2.criteria.Criteria.criteriaZero;
 import static org.example.lab2.util.FileUtils.readFile;
 import static org.example.lab2.util.TextUtils.getSequentialSubstrings;
 import static org.example.lab2.util.TextUtils.processText;
@@ -50,7 +52,7 @@ public class Main {
         List<String> list = new ArrayList<>(List.of("суперпупертекст"));
 
 //        2.0, 2.1, 2.2, 2.3, 4.0, 5.0
-//        List<String> subText = getSequentialSubstrings(text, X, L);
+        List<String> texts = getSequentialSubstrings(text, X, L);
 //        ArrayList<String> vigenere = vigenere(list, "пароль");
 //        System.out.println(vigenere);
 
@@ -61,5 +63,15 @@ public class Main {
 //        List<String> correlationSequence = SequenceGenerator.generateCorrelationSequence(L, 1, 1);
 //        System.out.println(sequence);
 //        System.out.println(correlationSequence);
+
+//        System.out.println(criteriaZero(texts, text, 1, 1));
+        System.out.println(criteriaZero(texts, text, 1, 2));
+//        System.out.println(criteriaZero(texts, text, 2, 1));
+        System.out.println(criteriaZero(texts, text, 2, 2));
+        System.out.println();
+//        System.out.println(criteriaOne(texts, text, 1, 1));
+        System.out.println(criteriaOne(texts, text, 1, 2));
+//        System.out.println(criteriaOne(texts, text, 2, 1));
+        System.out.println(criteriaOne(texts, text, 2, 2));
     }
 }
