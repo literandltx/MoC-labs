@@ -9,50 +9,54 @@ import static org.example.lab2.analyzer.BigramFrequencyAnalyzer.getPopularBigram
 import static org.example.lab2.analyzer.LetterFrequencyAnalyzer.getPopularLetterFrequencies;
 
 public class Criteria {
-    private static final int criteriaZeroLetterLimit = 1;
-    private static final int criteriaZeroBigramLimit = 1;
+    private static final int criteriaZeroLetterLimit = 17441; // 3000 or 17441 /// 17491
+    private static final int criteriaZeroBigramLimit = 500; // 3000 for 10 and
 
-    private static final int criteriaFirstLetterLimit = 1;
-    private static final int criteriaFirstBigramLimit = 1;
-    private static final int criteriaFirstLetterKf = 3;
+    private static final int criteriaFirstLetterLimit = 1000;
+    private static final int criteriaFirstBigramLimit = 1000;
+    private static final int criteriaFirstLetterKf = 1;
     private static final int criteriaFirstBigramKf = 200;
 
     public static int criteriaZero(final List<String> texts, final String mainText, final int exp, final int FP) {
-        int trueCounter = 0;
-        int falseCounter = 0;
+        int trueCounter = 0; // H0
+        int falseCounter = 0; // H1
 
         if (exp == 1) {
             final Map<Character, Integer> afrq = getPopularLetterFrequencies(mainText, criteriaZeroLetterLimit);
 
             for (final String text : texts) {
+                boolean isValid = true;
+
                 for (int j = 0; j < texts.getFirst().length(); j++) {
                     if (!afrq.containsKey(text.charAt(j))) {
                         falseCounter++;
+                        isValid = false;
                         break;
                     }
+                }
 
-                    if (j == ((texts.getFirst()).length() - 1)) {
-                        trueCounter++;
-                        break;
-                    }
+                if (isValid) {
+                    trueCounter++;
                 }
             }
         }
 
         if (exp == 2) {
-            final Map<String, Integer> afrq = getPopularBigramFrequencies(mainText, criteriaFirstBigramLimit);
+            final Map<String, Integer> afrq = getPopularBigramFrequencies(mainText, criteriaZeroBigramLimit);
 
             for (final String text : texts) {
+                boolean isValid = true;
+
                 for (int j = 0; j++ < texts.getFirst().length() - 2; j += 2) {
                     if (!afrq.containsKey(text.substring(j, j + 2))) {
                         falseCounter++;
+                        isValid = false;
                         break;
                     }
+                }
 
-                    if (j == ((texts.getFirst()).length() - 2)) {
-                        trueCounter++;
-                        break;
-                    }
+                if (isValid) {
+                    trueCounter++;
                 }
             }
         }
