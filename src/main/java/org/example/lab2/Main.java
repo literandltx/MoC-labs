@@ -3,6 +3,7 @@ package org.example.lab2;
 import java.util.*;
 
 import static org.example.lab2.cipher.VigenereCipher.vigenere;
+import static org.example.lab2.criteria.Criteria.criteriaOne;
 import static org.example.lab2.criteria.Criteria.criteriaZero;
 import static org.example.lab2.util.FileUtils.readFile;
 import static org.example.lab2.util.TextUtils.createBigramAlphabet;
@@ -38,35 +39,32 @@ public class Main {
         // N -- num
         // map is L : N
         final Map<Integer, Integer> param = new TreeMap<>();
-        param.put(    10, 10_000);
-        param.put(   100, 10_000);
-        param.put( 1_000, 10_000);
-        param.put(10_000, 1_000 );
+        param.put(10, 10_000);
+        param.put(100, 10_000);
+        param.put(1_000, 10_000);
+        param.put(10_000, 1_000);
 
-//        perform20VigenereLetter(text, param, "ш");
-//        perform20VigenereLetter(text, param, "шість");
-//        perform20VigenereLetter(text, param, "шістнадцять");
-//
-//        perform20VigenereBigram(text, param, "ш");
-//        perform20VigenereBigram(text, param, "шість");
-//        perform20VigenereBigram(text, param, "шістнадцять");
+        // to remove
+        String key1 = "ш";
+        String key2 = "шість";
+        String key3 = "шістнадцять";
     }
 
-    private static void perform20VigenereLetter(final String mainText, final Map<Integer, Integer> param, final String key) {
+    private static void perform20VigenereLetter(final String text, final Map<Integer, Integer> param, final String key) {
         System.out.printf("%-8s %-8s %-8s %-8s %-8s %-8s%n", "LEN", "NUM", "PH0", "PH1", "CH0", "CH1");
 
         for (final var entry : param.entrySet()) {
-            final List<String> texts = getSequentialSubstrings(mainText, entry.getValue(), entry.getKey());
+            final List<String> texts = getSequentialSubstrings(text, entry.getValue(), entry.getKey());
 
             final ArrayList<String> vigenere = vigenere(texts, key);
 
             int L = entry.getKey();
             int N = entry.getValue();
 
-            int pH0 = criteriaZero(texts, mainText, 1, 1);
-            int pH1 = criteriaZero(texts, mainText, 1, 0);
-            int cH0 = criteriaZero(vigenere, mainText, 1, 1);
-            int cH1 = criteriaZero(vigenere, mainText, 1, 0);
+            int pH0 = criteriaZero(texts, text, 1, 1);
+            int pH1 = criteriaZero(texts, text, 1, 0);
+            int cH0 = criteriaZero(vigenere, text, 1, 1);
+            int cH1 = criteriaZero(vigenere, text, 1, 0);
 
             System.out.printf("%-8d %-8d %-8d %-8d %-8d %-8d%n", L, N, pH0, pH1, cH0, cH1);
         }
@@ -74,25 +72,95 @@ public class Main {
         System.out.println();
     }
 
-    private static void perform20VigenereBigram(final String mainText, final Map<Integer, Integer> param, final String key) {
+    private static void perform20VigenereBigram(final String text, final Map<Integer, Integer> param, final String key) {
         System.out.printf("%-8s %-8s %-8s %-8s %-8s %-8s%n", "LEN", "NUM", "PH0", "PH1", "CH0", "CH1");
 
         for (final var entry : param.entrySet()) {
-            final List<String> texts = getSequentialSubstrings(mainText, entry.getValue(), entry.getKey());
+            final List<String> texts = getSequentialSubstrings(text, entry.getValue(), entry.getKey());
 
             final ArrayList<String> vigenere = vigenere(texts, key);
 
             int L = entry.getKey();
             int N = entry.getValue();
 
-            int pH0 = criteriaZero(texts, mainText, 2, 1);
-            int pH1 = criteriaZero(texts, mainText, 2, 0);
-            int cH0 = criteriaZero(vigenere, mainText, 2, 1);
-            int cH1 = criteriaZero(vigenere, mainText, 2, 0);
+            int pH0 = criteriaZero(texts, text, 2, 1);
+            int pH1 = criteriaZero(texts, text, 2, 0);
+            int cH0 = criteriaZero(vigenere, text, 2, 1);
+            int cH1 = criteriaZero(vigenere, text, 2, 0);
 
             System.out.printf("%-8d %-8d %-8d %-8d %-8d %-8d%n", L, N, pH0, pH1, cH0, cH1);
         }
 
         System.out.println();
+    }
+
+    private static void perform21VigenereLetter(final String text, final Map<Integer, Integer> param, final String key) {
+        System.out.printf("%-8s %-8s %-8s %-8s %-8s %-8s%n", "LEN", "NUM", "PH0", "PH1", "CH0", "CH1");
+
+        for (final var entry : param.entrySet()) {
+            final List<String> texts = getSequentialSubstrings(text, entry.getValue(), entry.getKey());
+
+            final ArrayList<String> vigenere = vigenere(texts, key);
+
+            int L = entry.getKey();
+            int N = entry.getValue();
+
+            int pH0 = criteriaOne(texts, text, 1, 1);
+            int pH1 = criteriaOne(texts, text, 1, 0);
+            int cH0 = criteriaOne(vigenere, text, 1, 1);
+            int cH1 = criteriaOne(vigenere, text, 1, 0);
+
+            System.out.printf("%-8d %-8d %-8d %-8d %-8d %-8d%n", L, N, pH0, pH1, cH0, cH1);
+        }
+
+        System.out.println();
+    }
+
+    private static void perform21VigenereBigram(final String text, final Map<Integer, Integer> param, final String key) {
+        System.out.printf("%-8s %-8s %-8s %-8s %-8s %-8s%n", "LEN", "NUM", "PH0", "PH1", "CH0", "CH1");
+
+        for (final var entry : param.entrySet()) {
+            final List<String> texts = getSequentialSubstrings(text, entry.getValue(), entry.getKey());
+
+            final ArrayList<String> vigenere = vigenere(texts, key);
+
+            int L = entry.getKey();
+            int N = entry.getValue();
+
+            int pH0 = criteriaOne(texts, text, 2, 1);
+            int pH1 = criteriaOne(texts, text, 2, 0);
+            int cH0 = criteriaOne(vigenere, text, 2, 1);
+            int cH1 = criteriaOne(vigenere, text, 2, 0);
+
+            System.out.printf("%-8d %-8d %-8d %-8d %-8d %-8d%n", L, N, pH0, pH1, cH0, cH1);
+        }
+
+        System.out.println();
+    }
+
+    public static void perform(final String text, Map<Integer, Integer> param) {
+        String key1 = "ш";
+        String key2 = "шість";
+        String key3 = "шістнадцять";
+
+        System.out.println("perform20VigenereLetter");
+        perform20VigenereLetter(text, param, key1);
+        perform20VigenereLetter(text, param, key2);
+        perform20VigenereLetter(text, param, key3);
+
+        System.out.println("perform20VigenereBigram");
+        perform20VigenereBigram(text, param, key1);
+        perform20VigenereBigram(text, param, key2);
+        perform20VigenereBigram(text, param, key3);
+
+        System.out.println("perform21VigenereLetter");
+        perform21VigenereLetter(text, param, key1);
+        perform21VigenereLetter(text, param, key2);
+        perform21VigenereLetter(text, param, key3);
+
+        System.out.println("perform21VigenereBigram");
+        perform21VigenereBigram(text, param, key1);
+        perform21VigenereBigram(text, param, key2);
+        perform21VigenereBigram(text, param, key3);
     }
 }
