@@ -1,103 +1,98 @@
 package org.example.lab2;
 
-import org.example.lab2.cipher.SequenceGenerator;
+import java.util.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.example.lab2.cipher.AffineCipher.*;
 import static org.example.lab2.cipher.VigenereCipher.vigenere;
-import static org.example.lab2.criteria.Criteria.criteriaOne;
 import static org.example.lab2.criteria.Criteria.criteriaZero;
 import static org.example.lab2.util.FileUtils.readFile;
+import static org.example.lab2.util.TextUtils.createBigramAlphabet;
 import static org.example.lab2.util.TextUtils.getSequentialSubstrings;
 import static org.example.lab2.util.TextUtils.processText;
 
 public class Main {
-//    private static final String filePath = "src/main/java/org/example/lab2/data/Zapiski_ykrajnskogo_samashedshogo.txt";
-//    private static final String filePath = "src/main/java/org/example/lab2/data/Vognem_i_mechem_1464462866.txt";
-//    private static final String filePath = "src/main/java/org/example/lab2/data/BorvamechivAStormofSwords_1428595049.txt";
-    private static final String filePath = "src/main/java/org/example/lab2/data/Bibliya_1369054606.txt";
-
     public static final String ALPHABET = "абвгдеєжзиіїйклмнопрстуфхцчшщьюя";
     public static final List<String> BIGRAM_ALPHABET = createBigramAlphabet();
 
-    private static List<String> createBigramAlphabet() {
-        final List<String> allBi = new ArrayList<>(ALPHABET.length() * ALPHABET.length());
-
-        for (int i = 0; i < ALPHABET.length(); i++) {
-            for (int j = 0; j < ALPHABET.length(); j++) {
-                allBi.add(String.valueOf(ALPHABET.charAt(i)) + ALPHABET.charAt(j));
-            }
-        }
-
-        return allBi;
-    }
+    private static final List<String> filePaths = Arrays.asList(
+            "src/main/java/org/example/lab2/data/Zapiski_ykrajnskogo_samashedshogo.txt",
+            "src/main/java/org/example/lab2/data/Vognem_i_mechem_1464462866.txt",
+            "src/main/java/org/example/lab2/data/BorvamechivAStormofSwords_1428595049.txt",
+            "src/main/java/org/example/lab2/data/Bibliya_1369054606.txt",
+            "src/main/java/org/example/lab2/data/Quovadis_1411395539.txt",
+            "src/main/java/org/example/lab2/data/Yerusalym_na_horakh.txt",
+            "src/main/java/org/example/lab2/data/Inferno_1400698206.txt",
+            "src/main/java/org/example/lab2/data/Tochka_obmany_1371139083.txt",
+            "src/main/java/org/example/lab2/data/Vtrachenii_simvol_1371139594.txt"
+    );
 
     public static void main(String[] args) {
-        // init
-        String rawText = readFile(filePath);
-        String text = processText(rawText);
+        final StringBuilder stringBuilder = new StringBuilder();
 
-        // text number
-//        List<Integer> listN = new ArrayList<>(List.of(1_000, 10_000));
-//        int N = 1_000;
-        int N = 10_000;
+        for (final String filePath : filePaths) {
+            stringBuilder.append(processText(readFile(filePath)));
+        }
 
-        // text len
-//        List<Integer> listL = new ArrayList<>(List.of(10, 100, 1_000, 10_000));
-//        int L = 10;
-        int L = 100;
-//        int L = 1_000;
-//        int L = 10_000;
-//        System.out.println(text);
+        final String text = stringBuilder.toString();
 
-//        displayLetterFrequencies(getLetterFrequencies(text));
-//        Map<Character, Double> normalizeLetterFrequencies = getNormalizeLetterFrequencies(getLetterFrequencies(text));
-//        Map<String, Double> normalizeBigramFrequencies = getNormalizeBigramFrequencies(getBigramFrequencies(text));
-//        displayFrequencies(normalizeBigramFrequencies);
-//        displayFrequencies(normalizeLetterFrequencies);
-//        System.out.println(entropyNGram(normalizeLetterFrequencies, 1));
-//        System.out.println(entropyNGram(normalizeBigramFrequencies, 2));
+        // L -- len
+        // N -- num
+        // map is L : N
+        final Map<Integer, Integer> param = new TreeMap<>();
+        param.put(    10, 10_000);
+        param.put(   100, 10_000);
+        param.put( 1_000, 10_000);
+        param.put(10_000, 1_000 );
 
-//        List<String> list = new ArrayList<>(List.of("суперпупертекст"));
+//        perform20VigenereLetter(text, param, "ш");
+//        perform20VigenereLetter(text, param, "шість");
+//        perform20VigenereLetter(text, param, "шістнадцять");
+//
+//        perform20VigenereBigram(text, param, "ш");
+//        perform20VigenereBigram(text, param, "шість");
+//        perform20VigenereBigram(text, param, "шістнадцять");
+    }
 
-        System.out.println(text.length());
-        List<String> texts = getSequentialSubstrings(text, N, L);
+    private static void perform20VigenereLetter(final String mainText, final Map<Integer, Integer> param, final String key) {
+        System.out.printf("%-8s %-8s %-8s %-8s %-8s %-8s%n", "LEN", "NUM", "PH0", "PH1", "CH0", "CH1");
 
-        System.out.println(texts.size());
-        System.out.println("------");
+        for (final var entry : param.entrySet()) {
+            final List<String> texts = getSequentialSubstrings(mainText, entry.getValue(), entry.getKey());
+
+            final ArrayList<String> vigenere = vigenere(texts, key);
+
+            int L = entry.getKey();
+            int N = entry.getValue();
+
+            int pH0 = criteriaZero(texts, mainText, 1, 1);
+            int pH1 = criteriaZero(texts, mainText, 1, 0);
+            int cH0 = criteriaZero(vigenere, mainText, 1, 1);
+            int cH1 = criteriaZero(vigenere, mainText, 1, 0);
+
+            System.out.printf("%-8d %-8d %-8d %-8d %-8d %-8d%n", L, N, pH0, pH1, cH0, cH1);
+        }
+
         System.out.println();
+    }
 
-//        ArrayList<String> vigenere = vigenere(list, "пароль");
-//        System.out.println(vigenere);
+    private static void perform20VigenereBigram(final String mainText, final Map<Integer, Integer> param, final String key) {
+        System.out.printf("%-8s %-8s %-8s %-8s %-8s %-8s%n", "LEN", "NUM", "PH0", "PH1", "CH0", "CH1");
 
-//        List<String> affine = affine(list, 5, 7, 2);
-//        System.out.println(affine);
+        for (final var entry : param.entrySet()) {
+            final List<String> texts = getSequentialSubstrings(mainText, entry.getValue(), entry.getKey());
 
-//        List<String> sequence = SequenceGenerator.generatedSequence(L, 1, 1);
-//        List<String> correlationSequence = SequenceGenerator.generateCorrelationSequence(L, 1, 1);
-//        System.out.println(sequence);
-//        System.out.println(correlationSequence);
+            final ArrayList<String> vigenere = vigenere(texts, key);
 
-        ArrayList<String> vigenere = vigenere(texts, "шість");
+            int L = entry.getKey();
+            int N = entry.getValue();
 
-//        System.out.println("H0: " + criteriaZero(texts, text, 1, 1) + " H1: " + criteriaZero(texts, text, 1, 0));
-        System.out.println("H0: " + criteriaZero(texts, text, 2, 1) + " H1: " + criteriaZero(texts, text, 2, 0));
+            int pH0 = criteriaZero(texts, mainText, 2, 1);
+            int pH1 = criteriaZero(texts, mainText, 2, 0);
+            int cH0 = criteriaZero(vigenere, mainText, 2, 1);
+            int cH1 = criteriaZero(vigenere, mainText, 2, 0);
+
+            System.out.printf("%-8d %-8d %-8d %-8d %-8d %-8d%n", L, N, pH0, pH1, cH0, cH1);
+        }
+
         System.out.println();
-//        System.out.println("H0: " + criteriaZero(vigenere, text, 1, 1) + " H1: " + criteriaZero(vigenere, text, 1, 0));
-        System.out.println("H0: " + criteriaZero(vigenere, text, 2, 1) + " H1: " + criteriaZero(vigenere, text, 2, 0));
-        System.out.println();
-
-//        System.out.println(criteriaOne(texts, text, 1, 1));
-//        System.out.println(criteriaOne(texts, text, 1, 2));
-//        System.out.println(criteriaOne(texts, text, 2, 1));
-//        System.out.println(criteriaOne(texts, text, 2, 2));
-//        System.out.println();
-//        System.out.println(criteriaOne(vigenere, text, 1, 1));
-//        System.out.println(criteriaOne(vigenere, text, 1, 2));
-//        System.out.println(criteriaOne(vigenere, text, 2, 1));
-//        System.out.println(criteriaOne(vigenere, text, 2, 2));
-//        System.out.println();
     }
 }
