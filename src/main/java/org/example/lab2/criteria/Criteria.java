@@ -1,8 +1,7 @@
 package org.example.lab2.criteria;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.Math.abs;
 import static org.example.lab2.analyzer.BigramFrequencyAnalyzer.getPopularBigramFrequencies;
@@ -17,10 +16,10 @@ public class Criteria {
     private static final int criteria21LetterKf = 2;
     private static final int criteria21BigramKf = 700;
 
-    private static final int criteria22LetterLimit = 50_000;
-    private static final int criteria22BigramLimit = 30;
-    private static final int criteria22LetterKf = 1;
-    private static final int criteria22BigramKf = 1;
+    private static final int criteria22LetterLimit = 13225;
+    private static final int criteria22BigramLimit = 0;
+    private static final int criteria22LetterKf = 4;
+    private static final int criteria22BigramKf = 2;
 
 
     public static int criteriaZero(final List<String> texts, final String mainText, final int exp, final int FP) {
@@ -102,51 +101,58 @@ public class Criteria {
     }
 
     public static int criteriaTwo(final List<String> texts, final String mainText, final int exp, final int FP) {
-        int falseCounter = 0;
+        final AtomicInteger falseCounter = new AtomicInteger(0);
 
         if (exp == 1) {
             final Map<Character, Integer> afrq = getPopularLetterFrequencies(mainText, criteria22LetterLimit);
 
-            for (final String text : texts) {
-                final Map<Character, Integer> tfrq = getPopularLetterFrequencies(mainText, criteria22LetterLimit);
+            texts.parallelStream().forEach(text -> {
+                final Map<Character, Integer> tfrq = getPopularLetterFrequencies(text, 0);
 
-                for (int j = 0; j < texts.getFirst().length(); j++) {
-                    char temp = text.charAt(j);
+                for (int j = 0; j < text.length(); j++) {
+                    final char temp = text.charAt(j);
 
-                    if (afrq.containsKey(temp)) {
-                        if (tfrq.get(temp) < criteria22LetterKf) {
-                            falseCounter++;
-                            break;
-                        }
+                    if (afrq.containsKey(temp) && tfrq.get(temp) < criteria22LetterKf) {
+                        falseCounter.incrementAndGet();
+                        break;
                     }
                 }
-            }
+            });
         }
 
         if (exp == 2) {
-            final Map<String, Integer> afrq = getPopularBigramFrequencies(mainText, criteria22LetterLimit);
+            final Map<String, Integer> afrq = getPopularBigramFrequencies(mainText, criteria22BigramLimit);
 
-            for (final String text : texts) {
-                final Map<String, Integer> tfrq = getPopularBigramFrequencies(mainText, criteria22BigramLimit);
+            texts.parallelStream().forEach(text -> {
+                final Map<String, Integer> tfrq = getPopularBigramFrequencies(text, 0);
 
                 for (int j = 0; j++ < texts.getFirst().length() - 2; j += 2) {
-                    String temp = text.substring(j, j + 2);
+                    final String temp = text.substring(j, j + 2);
 
-                    if (afrq.containsKey(temp)) {
-                        if (tfrq.get(temp) < criteria22BigramKf) {
-                            falseCounter++;
-                            break;
-                        }
+                    if (afrq.containsKey(temp) && tfrq.get(temp) < criteria22BigramKf) {
+                        falseCounter.incrementAndGet();
+                        break;
                     }
                 }
-            }
+            });
         }
 
-        return FP == 1 ? texts.size() - falseCounter : falseCounter;
+        return FP == 1 ? texts.size() - falseCounter.get() : falseCounter.get();
     }
 
     public static int criteriaThree(final List<String> texts, final String mainText, final int exp, final int FFPP) {
         return 0;
     }
 
+    public static int criteriaFour(final List<String> texts, final String mainText, final int exp, final int FFPP) {
+        return 0;
+    }
+
+    public static int criteriaFive(final List<String> texts, final String mainText, final int exp, final int FFPP) {
+        return 0;
+    }
+
+    public static int criteriaStructure(final List<String> texts, final String mainText, final int exp, final int FFPP) {
+        return 0;
+    }
 }

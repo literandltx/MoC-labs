@@ -3,8 +3,7 @@ package org.example.lab2;
 import java.util.*;
 
 import static org.example.lab2.cipher.VigenereCipher.vigenere;
-import static org.example.lab2.criteria.Criteria.criteriaOne;
-import static org.example.lab2.criteria.Criteria.criteriaZero;
+import static org.example.lab2.criteria.Criteria.*;
 import static org.example.lab2.util.FileUtils.readFile;
 import static org.example.lab2.util.TextUtils.createBigramAlphabet;
 import static org.example.lab2.util.TextUtils.getSequentialSubstrings;
@@ -48,6 +47,7 @@ public class Main {
         String key1 = "ш";
         String key2 = "шість";
         String key3 = "шістнадцять";
+
     }
 
     private static void perform20VigenereLetter(final String text, final Map<Integer, Integer> param, final String key) {
@@ -138,6 +138,68 @@ public class Main {
         System.out.println();
     }
 
+    private static void perform22VigenereLetter(final String text, final Map<Integer, Integer> param, final String key) {
+        System.out.printf("%-8s %-8s %-8s %-8s %-8s %-8s%n", "LEN", "NUM", "PH0", "PH1", "CH0", "CH1");
+
+        for (final var entry : param.entrySet()) {
+            final List<String> texts = getSequentialSubstrings(text, entry.getValue(), entry.getKey());
+
+            final ArrayList<String> vigenere = vigenere(texts, key);
+
+            int L = entry.getKey();
+            int N = entry.getValue();
+
+            int pH0 = criteriaTwo(texts, text, 1, 1);
+            int pH1 = texts.size() - pH0;
+            int cH0 = criteriaTwo(vigenere, text, 1, 1);
+            int cH1 = texts.size() - cH0;
+
+            System.out.printf("%-8d %-8d %-8d %-8d %-8d %-8d%n", L, N, pH0, pH1, cH0, cH1);
+        }
+
+        System.out.println();
+    }
+
+    private static void perform22VigenereBigram(final String text, final Map<Integer, Integer> param, final String key) {
+        System.out.printf("%-8s %-8s %-8s %-8s %-8s %-8s%n", "LEN", "NUM", "PH0", "PH1", "CH0", "CH1");
+
+        for (final var entry : param.entrySet()) {
+            final List<String> texts = getSequentialSubstrings(text, entry.getValue(), entry.getKey());
+
+            final ArrayList<String> vigenere = vigenere(texts, key);
+
+            int L = entry.getKey();
+            int N = entry.getValue();
+
+            int pH0 = criteriaTwo(texts, text, 2, 1);
+            int pH1 = texts.size() - pH0;
+            int cH0 = criteriaTwo(vigenere, text, 2, 1);
+            int cH1 = texts.size() - cH0;
+
+            System.out.printf("%-8d %-8d %-8d %-8d %-8d %-8d%n", L, N, pH0, pH1, cH0, cH1);
+        }
+
+        System.out.println();
+    }
+
+    private static void perform23VigenereLetter(final String text, final Map<Integer, Integer> param, final String key) {
+    }
+
+    private static void perform23VigenereBigram(final String text, final Map<Integer, Integer> param, final String key) {
+    }
+
+    private static void perform40VigenereLetter(final String text, final Map<Integer, Integer> param, final String key) {
+    }
+
+    private static void perform40VigenereBigram(final String text, final Map<Integer, Integer> param, final String key) {
+    }
+
+    private static void perform50VigenereLetter(final String text, final Map<Integer, Integer> param, final String key) {
+    }
+
+    private static void perform50VigenereBigram(final String text, final Map<Integer, Integer> param, final String key) {
+    }
+
     public static void perform(final String text, Map<Integer, Integer> param) {
         String key1 = "ш";
         String key2 = "шість";
@@ -162,5 +224,15 @@ public class Main {
         perform21VigenereBigram(text, param, key1);
         perform21VigenereBigram(text, param, key2);
         perform21VigenereBigram(text, param, key3);
+
+        System.out.println("perform22VigenereLetter");
+        perform22VigenereLetter(text, param, key1);
+        perform22VigenereLetter(text, param, key2);
+        perform22VigenereLetter(text, param, key3);
+
+        System.out.println("perform22VigenereBigram");
+        perform22VigenereBigram(text, param, key1);
+        perform22VigenereBigram(text, param, key2);
+        perform22VigenereBigram(text, param, key3);
     }
 }
