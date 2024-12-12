@@ -48,6 +48,10 @@ public class Main {
         String key2 = "шість";
         String key3 = "шістнадцять";
 
+
+        perform23VigenereLetter(text, param, key1);
+        perform23VigenereLetter(text, param, key2);
+        perform23VigenereLetter(text, param, key3);
     }
 
     private static void perform20VigenereLetter(final String text, final Map<Integer, Integer> param, final String key) {
@@ -183,6 +187,25 @@ public class Main {
     }
 
     private static void perform23VigenereLetter(final String text, final Map<Integer, Integer> param, final String key) {
+        System.out.printf("%-8s %-8s %-8s %-8s %-8s %-8s%n", "LEN", "NUM", "PH0", "PH1", "CH0", "CH1");
+
+        for (final var entry : param.entrySet()) {
+            final List<String> texts = getSequentialSubstrings(text, entry.getValue(), entry.getKey());
+
+            final ArrayList<String> vigenere = vigenere(texts, key);
+
+            int L = entry.getKey();
+            int N = entry.getValue();
+
+            int pH0 = criteriaThree(texts, text, 1, 1);
+            int pH1 = texts.size() - pH0;
+            int cH0 = criteriaThree(vigenere, text, 1, 1);
+            int cH1 = texts.size() - cH0;
+
+            System.out.printf("%-8d %-8d %-8d %-8d %-8d %-8d%n", L, N, pH0, pH1, cH0, cH1);
+        }
+
+        System.out.println();
     }
 
     private static void perform23VigenereBigram(final String text, final Map<Integer, Integer> param, final String key) {

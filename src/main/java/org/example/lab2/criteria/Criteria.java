@@ -140,8 +140,37 @@ public class Criteria {
         return FP == 1 ? texts.size() - falseCounter.get() : falseCounter.get();
     }
 
-    public static int criteriaThree(final List<String> texts, final String mainText, final int exp, final int FFPP) {
-        return 0;
+    public static int criteriaThree(final List<String> texts, final String mainText, final int exp, final int FP) {
+        final AtomicInteger falseCounter = new AtomicInteger(0);
+
+        if (exp == 1) {
+            final Map<Character, Integer> afrq = getPopularLetterFrequencies(mainText, criteria22LetterLimit);
+            int sum = 0;
+
+            for (String text : texts) {
+                final Map<Character, Integer> tfrq = getPopularLetterFrequencies(text, 0);
+
+                for (int j = 0; j < text.length(); j++) {
+                    final char temp = text.charAt(j);
+
+                    if (afrq.containsKey(temp)) {
+                        sum += tfrq.get(temp);
+                    }
+                }
+
+                if (sum < text.length() * 2) {
+                    falseCounter.incrementAndGet();
+                }
+
+                sum = 0;
+            }
+        }
+
+        if (exp == 2) {
+
+        }
+
+        return FP == 1 ? texts.size() - falseCounter.get() : falseCounter.get();
     }
 
     public static int criteriaFour(final List<String> texts, final String mainText, final int exp, final int FFPP) {
