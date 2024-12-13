@@ -48,10 +48,22 @@ public class Main {
         String key2 = "шість";
         String key3 = "шістнадцять";
 
+//        Map<Character, Double> letterFrequencies = getNormalizeLetterFrequencies(getLetterFrequencies(text));
+//        Map<String, Double> bigramFrequencies = getNormalizeBigramFrequencies(getBigramFrequencies(text));
 
-        perform23VigenereLetter(text, param, key1);
-        perform23VigenereLetter(text, param, key2);
-        perform23VigenereLetter(text, param, key3);
+//        letterFrequencies.entrySet().stream()
+//                .sorted(Map.Entry.comparingByValue(Comparator.naturalOrder()))
+//                .forEach(System.out::println);
+//        System.out.println(letterFrequencies.values().stream().mapToDouble(Double::doubleValue).sum());
+
+//        bigramFrequencies.entrySet().stream()
+//                .sorted(Map.Entry.comparingByValue(Comparator.naturalOrder()))
+//                .forEach(System.out::println);
+//        System.out.println(bigramFrequencies.values().stream().mapToDouble(Double::doubleValue).sum());
+
+//        perform23VigenereLetter(text, param, key1);
+//        perform23VigenereLetter(text, param, key2);
+//        perform23VigenereLetter(text, param, key3);
     }
 
     private static void perform20VigenereLetter(final String text, final Map<Integer, Integer> param, final String key) {
@@ -257,5 +269,13 @@ public class Main {
         perform22VigenereBigram(text, param, key1);
         perform22VigenereBigram(text, param, key2);
         perform22VigenereBigram(text, param, key3);
+    }
+
+    private static long measureExecutionTime(final Runnable method) {
+        final long startTime = System.nanoTime();
+        method.run();
+        final long endTime = System.nanoTime();
+
+        return endTime - startTime;
     }
 }

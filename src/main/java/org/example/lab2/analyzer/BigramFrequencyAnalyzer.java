@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static org.example.lab2.Main.BIGRAM_ALPHABET;
+
 public class BigramFrequencyAnalyzer {
     public static Map<String, Integer> getBigramFrequencies(final String text) {
         final Map<String, Integer> bigramFrequencies = new HashMap<>();
@@ -43,6 +45,24 @@ public class BigramFrequencyAnalyzer {
         return getBigramFrequencies(text).entrySet().stream()
                 .filter(entry -> entry.getValue() < limit)
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    public static double findBigramIndex(String text, HashMap<String, Integer> bigramFrequency) {
+        if (text.length() <= 1) {
+            return 0;
+        }
+
+        double index = 0;
+
+        for (final String bigram : BIGRAM_ALPHABET) {
+            final Integer freq = bigramFrequency.get(bigram);
+
+            if (freq != null) {
+                index += freq * (freq - 1);
+            }
+        }
+
+        return index / (text.length() * (text.length() - 1));
     }
 
 }

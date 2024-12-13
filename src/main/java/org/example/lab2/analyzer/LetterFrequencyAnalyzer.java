@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static org.example.lab2.Main.ALPHABET;
+
 public class LetterFrequencyAnalyzer {
     public static Map<Character, Integer> getLetterFrequencies(final String text) {
         final Map<Character, Integer> frequencies = new HashMap<>();
@@ -47,6 +49,21 @@ public class LetterFrequencyAnalyzer {
         return getLetterFrequencies(text).entrySet().stream()
                 .filter(entry -> entry.getValue() < limit)
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    public static double findLetterIndex(final String text, final Map<Character, Integer> letterFrequencies) {
+        final int length = text.length();
+        double index = 0;
+
+        if (length < 2) {
+            return 0;
+        }
+
+        for (final int frequency : letterFrequencies.values()) {
+            index += frequency * (frequency - 1);
+        }
+
+        return index / (length * (length - 1));
     }
 
 }

@@ -167,6 +167,28 @@ public class Criteria {
         }
 
         if (exp == 2) {
+            final Map<String, Integer> afrq = getPopularBigramFrequencies(mainText, criteria22BigramLimit);
+            int sum = 0;
+
+            for (final String text : texts) {
+                final Map<String, Integer> tfrq = getPopularBigramFrequencies(text, 0);
+
+                for (int j = 0; j < text.length(); j++) {
+                    String lTemp = text.substring(j, j + 2);
+
+                    if (afrq.containsKey(lTemp)) {
+                        sum += tfrq.get(lTemp);
+                    }
+                }
+
+                if (sum < text.length() * 1.01) {
+                    falseCounter.incrementAndGet();
+
+                }
+
+                sum = 0;
+            }
+
 
         }
 
