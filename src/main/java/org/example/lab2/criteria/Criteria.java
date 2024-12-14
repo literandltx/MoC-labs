@@ -4,8 +4,8 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.Math.abs;
-import static org.example.lab2.analyzer.BigramFrequencyAnalyzer.getPopularBigramFrequencies;
-import static org.example.lab2.analyzer.LetterFrequencyAnalyzer.getPopularLetterFrequencies;
+import static org.example.lab2.analyzer.BigramFrequencyAnalyzer.*;
+import static org.example.lab2.analyzer.LetterFrequencyAnalyzer.*;
 
 public class Criteria {
     private static final int criteria20LetterLimit = 50_000;
@@ -195,8 +195,38 @@ public class Criteria {
         return FP == 1 ? texts.size() - falseCounter.get() : falseCounter.get();
     }
 
-    public static int criteriaFour(final List<String> texts, final String mainText, final int exp, final int FFPP) {
-        return 0;
+    public static int criteriaFour(final List<String> texts, final String mainText, final int exp, final int FP) {
+        final AtomicInteger falseCounter = new AtomicInteger(0);
+
+        if (exp == 1) {
+            final double mainIndex = findLetterIndex(mainText, getLetterFrequencies(mainText));
+
+            for (final String text : texts) {
+                final double index = findLetterIndex(text, getLetterFrequencies(text));
+
+                if (abs(mainIndex - index) <= 18.53) {
+                    falseCounter.incrementAndGet();
+                }
+            }
+        }
+
+        if (exp == 2) {
+            final double mainIndex = findBigramIndex(mainText, getBigramFrequencies(mainText));
+
+            Map<Double, Integer> map = new HashMap<>();
+
+            for (final String text : texts) {
+                final double index = findBigramIndex(text, getBigramFrequencies(text));
+
+                map.put(Math.abs(mainIndex - index), map.getOrDefault(Math.abs(mainIndex - index), 0) + 1);
+
+                if (abs(mainIndex - index) <= 1314.7825) {
+                    falseCounter.incrementAndGet();
+                }
+            }
+        }
+
+        return FP == 1 ? texts.size() - falseCounter.get() : falseCounter.get();
     }
 
     public static int criteriaFive(final List<String> texts, final String mainText, final int exp, final int FFPP) {

@@ -47,7 +47,7 @@ public class BigramFrequencyAnalyzer {
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    public static double findBigramIndex(String text, HashMap<String, Integer> bigramFrequency) {
+    public static double findBigramIndex(final String text, final Map<String, Integer> bigramFrequency) {
         if (text.length() <= 1) {
             return 0;
         }
