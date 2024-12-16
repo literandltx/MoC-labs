@@ -2,8 +2,7 @@ package org.example.lab2;
 
 import java.util.*;
 
-import static org.example.lab2.analyzer.BigramFrequencyAnalyzer.findBigramIndex;
-import static org.example.lab2.analyzer.BigramFrequencyAnalyzer.getBigramFrequencies;
+import static org.example.lab2.cipher.SequenceGenerator.generatedSequence;
 import static org.example.lab2.cipher.VigenereCipher.vigenere;
 import static org.example.lab2.criteria.Criteria.*;
 import static org.example.lab2.util.FileUtils.readFile;
@@ -45,14 +44,11 @@ public class Main {
         param.put(1_000, 10_000);
         param.put(10_000, 1_000);
 
-        // to remove
         String key1 = "ш";
         String key2 = "шість";
         String key3 = "шістнадцять";
 
-        perform50VigenereBigram(text, param, key1);
-        perform50VigenereBigram(text, param, key2);
-        perform50VigenereBigram(text, param, key3);
+        performStructure(text, param, key1);
     }
 
     private static void perform20VigenereLetter(final String text, final Map<Integer, Integer> param, final String key) {
@@ -319,10 +315,38 @@ public class Main {
         System.out.println();
     }
 
-    public static void perform(final String text, Map<Integer, Integer> param) {
-        String key1 = "ш";
-        String key2 = "шість";
-        String key3 = "шістнадцять";
+    private static void performStructure(final String text, final Map<Integer, Integer> param, final String key) {
+        System.out.printf("%-8s %-8s %-8s %-8s %-8s %-8s%n", "LEN", "NUM", "PH0", "PH1", "CH0", "CH1");
+
+        for (final var entry : param.entrySet()) {
+            final List<String> texts = getSequentialSubstrings(text, entry.getValue(), entry.getKey());
+            List<String> generatedSequence = generatedSequence(entry.getValue(), entry.getKey(), 1);
+
+            int L = entry.getKey();
+            int N = entry.getValue();
+
+            int pH0 = criteriaStructure(texts);
+            int pH1 = texts.size() - pH0;
+            int cH0 = criteriaStructure(generatedSequence);
+            int cH1 = texts.size() - cH0;
+
+            System.out.printf("%-8d %-8d %-8d %-8d %-8d %-8d%n", L, N, pH0, pH1, cH0, cH1);
+        }
+
+        System.out.println();
+    }
+
+    private static void performSearchParamStructCriteria(final List<String> texts, final Map<Integer, Integer> param) {
+        List<Integer> pH0 = searchCriteriaStructure(texts);
+
+        System.out.println("M: " + findMean(pH0));
+        System.out.println("D: " + findSTD(pH0, findMean(pH0)));
+    }
+
+    public static void perform(final String text, final Map<Integer, Integer> param) {
+        final String key1 = "ш";
+        final String key2 = "шість";
+        final String key3 = "шістнадцять";
 
         System.out.println("perform20VigenereLetter");
         perform20VigenereLetter(text, param, key1);
@@ -373,6 +397,43 @@ public class Main {
         perform40VigenereBigram(text, param, key1);
         perform40VigenereBigram(text, param, key2);
         perform40VigenereBigram(text, param, key3);
+
+        System.out.println("perform50VigenereLetter");
+        perform50VigenereLetter(text, param, key1);
+        perform50VigenereLetter(text, param, key2);
+        perform50VigenereLetter(text, param, key3);
+
+        System.out.println("perform50VigenereBigram");
+        perform50VigenereBigram(text, param, key1);
+        perform50VigenereBigram(text, param, key2);
+        perform50VigenereBigram(text, param, key3);
+    }
+
+    public static double findMean(final List<Integer> values) {
+        double sum = 0;
+
+        for (int value : values) {
+            sum += value;
+        }
+
+        return sum / values.size();
+    }
+
+    public static double findSTD(final List<Integer> values, final double mean) {
+        double squared_diff_sum = 0;
+
+        for (final int value : values) {
+            squared_diff_sum += Math.pow(value - mean, 2);
+        }
+
+        return Math.sqrt(squared_diff_sum / values.size());
+    }
+
+    private static void printMeanStd(final String text, final Map<Integer, Integer> param) {
+        performSearchParamStructCriteria(getSequentialSubstrings(text, 10_000, 10), param);
+        performSearchParamStructCriteria(getSequentialSubstrings(text, 10_000, 100), param);
+        performSearchParamStructCriteria(getSequentialSubstrings(text, 10_000, 1_000), param);
+        performSearchParamStructCriteria(getSequentialSubstrings(text, 1_000, 10_000), param);
     }
 
     private static long measureExecutionTime(final Runnable method) {

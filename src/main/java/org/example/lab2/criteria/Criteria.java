@@ -1,7 +1,9 @@
 package org.example.lab2.criteria;
 
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.zip.Deflater;
 
 import static java.lang.Math.abs;
 import static org.example.lab2.analyzer.BigramFrequencyAnalyzer.*;
@@ -277,7 +279,53 @@ public class Criteria {
         return FP == 1 ? texts.size() - falseCounter.get() : falseCounter.get();
     }
 
-    public static int criteriaStructure(final List<String> texts, final String mainText, final int exp, final int FFPP) {
-        return 0;
+    public static int criteriaStructure(final List<String> texts) {
+        final AtomicInteger falseCounter = new AtomicInteger(0);
+        int compressedLength;
+
+        for (final String text : texts) {
+            final byte[] textBytes = text.getBytes(StandardCharsets.UTF_8);
+
+            final Deflater deflater = new Deflater();
+            deflater.setInput(textBytes);
+            deflater.finish();
+
+            byte[] compressedData = new byte[textBytes.length];
+            compressedLength = deflater.deflate(compressedData);
+            deflater.end();
+
+            double mean = 6247.526 / 10_000;
+            double std = 455.2213673851438 / 10_000;
+            double minK = (mean - std * 3) * text.length();
+            double maxK = (mean + std * 3)  * text.length();
+
+            if (!(compressedLength > minK) || !(compressedLength < maxK)) {
+                continue;
+            }
+            falseCounter.incrementAndGet();
+        }
+
+        return falseCounter.get();
+    }
+
+    public static List<Integer> searchCriteriaStructure(final List<String> texts) {
+        final List<Integer> values = new ArrayList<>();
+
+        for (final String text : texts) {
+            final byte[] textBytes = text.getBytes(StandardCharsets.UTF_8);
+            final Deflater deflater = new Deflater();
+
+            deflater.setInput(textBytes);
+            deflater.finish();
+
+            final byte[] compressedData = new byte[textBytes.length];
+            final int compressedLength = deflater.deflate(compressedData);
+            deflater.end();
+
+            values.add(compressedLength);
+//            System.out.println(text.length() + " " + compressedLength);
+        }
+
+        return values;
     }
 }

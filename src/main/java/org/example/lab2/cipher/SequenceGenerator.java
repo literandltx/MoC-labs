@@ -10,14 +10,14 @@ import static org.example.lab2.Main.BIGRAM_ALPHABET;
 public class SequenceGenerator {
    private static final SecureRandom secureRandom = new SecureRandom(new byte[]{(byte) System.nanoTime(), (byte) System.currentTimeMillis()});
 
-    public static List<String> generatedSequence(int L, int N, int exp) {
+    public static List<String> generatedSequence(int len, int num, int exp) {
         final List<String> result = new ArrayList<>();
 
         if (exp == 1) {
-            for (int i = 0; i < N; i++) {
+            for (int i = 0; i < num; i++) {
                 final StringBuilder stringBuilder = new StringBuilder();
 
-                for (int j = 0; j < L; j++) {
+                for (int j = 0; j < len; j++) {
                     int index = secureRandom.nextInt(32);
 
                     stringBuilder.append(ALPHABET.charAt(index));
@@ -28,10 +28,10 @@ public class SequenceGenerator {
         }
 
         if (exp == 2) {
-            for (int i = 0; i < N; i++) {
+            for (int i = 0; i < num; i++) {
                 final StringBuilder stringBuilder = new StringBuilder();
 
-                for (int j = 0; j++ < L; j += 2) {
+                for (int j = 0; j++ < len; j += 2) {
                     int index = secureRandom.nextInt(1024);
 
                     stringBuilder.append(BIGRAM_ALPHABET.get(index));
@@ -44,11 +44,11 @@ public class SequenceGenerator {
         return result;
     }
 
-    public static List<String> generateCorrelationSequence(int L, int N, int exp) {
+    public static List<String> generateCorrelationSequence(int len, int num, int exp) {
         final List<String> result = new ArrayList<>();
 
         if (exp == 1) {
-            for (int i = 0; i < N; i++) {
+            for (int i = 0; i < num; i++) {
                 final StringBuilder stringBuilder = new StringBuilder();
 
                 int s0 = secureRandom.nextInt(32);
@@ -57,7 +57,7 @@ public class SequenceGenerator {
 
                 stringBuilder.append(ALPHABET.charAt(s));
 
-                for (int j = 1; j < L; j++) {
+                for (int j = 1; j < len; j++) {
                     s0 = s1;
                     s1 = s;
                     s = (s0 + s1) % 32;
@@ -70,7 +70,7 @@ public class SequenceGenerator {
         }
 
         if (exp == 2) {
-            for (int i = 0; i < N; i++) {
+            for (int i = 0; i < num; i++) {
                 final StringBuilder stringBuilder = new StringBuilder();
 
                 int s0 = secureRandom.nextInt(1024);
@@ -79,7 +79,7 @@ public class SequenceGenerator {
 
                 stringBuilder.append(BIGRAM_ALPHABET.get(s));
 
-                for (int j = 1; j++ < L; j += 2) {
+                for (int j = 1; j++ < len; j += 2) {
                     s0 = s1;
                     s1 = s;
                     s = (s0 + s1) % 1024;
