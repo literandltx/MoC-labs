@@ -229,8 +229,52 @@ public class Criteria {
         return FP == 1 ? texts.size() - falseCounter.get() : falseCounter.get();
     }
 
-    public static int criteriaFive(final List<String> texts, final String mainText, final int exp, final int FFPP) {
-        return 0;
+    public static int criteriaFive(final List<String> texts, final String mainText, final int exp, final int FP) {
+        AtomicInteger falseCounter = new AtomicInteger(0);
+
+        if (exp == 1) {
+            final Map<Character, Integer> frq = getPopularLetterFrequencies(mainText, 50_000);
+            int sum;
+
+            for (final String text : texts) {
+                final Map<Character, Integer> brf = new HashMap<>();
+
+                for (int j = 0; j < text.length(); j++) {
+                    if (frq.containsKey(text.charAt(j))) {
+                        brf.put(text.charAt(j), 1);
+                    }
+                }
+
+                sum = frq.size() - brf.size();
+                int threshold = (int) Math.ceil(frq.size() * 0.02); // (0..1)
+                if (sum < threshold) {
+                    falseCounter.incrementAndGet();
+                }
+            }
+        }
+
+        if (exp == 2) {
+            final Map<String, Integer> frq = getPopularBigramFrequencies(mainText, 10);
+            int sum;
+
+            for (final String text : texts) {
+                final Map<String, Integer> brf = new HashMap<>();
+
+                for (int j = 0; j++ < text.length() - 2; j += 2) {
+                    if (frq.containsKey(text.substring(j, j + 2))) {
+                        brf.put(text.substring(j, j + 2), 1);
+                    }
+                }
+
+                sum = frq.size() - brf.size();
+                int threshold = (int) Math.ceil(frq.size() * 0.8); // (0..1) // 0.5 0.8
+                if (sum < threshold) {
+                    falseCounter.incrementAndGet();
+                }
+            }
+        }
+
+        return FP == 1 ? texts.size() - falseCounter.get() : falseCounter.get();
     }
 
     public static int criteriaStructure(final List<String> texts, final String mainText, final int exp, final int FFPP) {

@@ -50,6 +50,9 @@ public class Main {
         String key2 = "шість";
         String key3 = "шістнадцять";
 
+        perform50VigenereBigram(text, param, key1);
+        perform50VigenereBigram(text, param, key2);
+        perform50VigenereBigram(text, param, key3);
     }
 
     private static void perform20VigenereLetter(final String text, final Map<Integer, Integer> param, final String key) {
@@ -273,9 +276,47 @@ public class Main {
     }
 
     private static void perform50VigenereLetter(final String text, final Map<Integer, Integer> param, final String key) {
+        System.out.printf("%-8s %-8s %-8s %-8s %-8s %-8s%n", "LEN", "NUM", "PH0", "PH1", "CH0", "CH1");
+
+        for (final var entry : param.entrySet()) {
+            final List<String> texts = getSequentialSubstrings(text, entry.getValue(), entry.getKey());
+
+            final ArrayList<String> vigenere = vigenere(texts, key);
+
+            int L = entry.getKey();
+            int N = entry.getValue();
+
+            int pH0 = criteriaFive(texts, text, 1, 1);
+            int pH1 = texts.size() - pH0;
+            int cH0 = criteriaFive(vigenere, text, 1, 1);
+            int cH1 = texts.size() - cH0;
+
+            System.out.printf("%-8d %-8d %-8d %-8d %-8d %-8d%n", L, N, pH0, pH1, cH0, cH1);
+        }
+
+        System.out.println();
     }
 
     private static void perform50VigenereBigram(final String text, final Map<Integer, Integer> param, final String key) {
+        System.out.printf("%-8s %-8s %-8s %-8s %-8s %-8s%n", "LEN", "NUM", "PH0", "PH1", "CH0", "CH1");
+
+        for (final var entry : param.entrySet()) {
+            final List<String> texts = getSequentialSubstrings(text, entry.getValue(), entry.getKey());
+
+            final ArrayList<String> vigenere = vigenere(texts, key);
+
+            int L = entry.getKey();
+            int N = entry.getValue();
+
+            int pH0 = criteriaFive(texts, text, 2, 1);
+            int pH1 = texts.size() - pH0;
+            int cH0 = criteriaFive(vigenere, text, 2, 1);
+            int cH1 = texts.size() - cH0;
+
+            System.out.printf("%-8d %-8d %-8d %-8d %-8d %-8d%n", L, N, pH0, pH1, cH0, cH1);
+        }
+
+        System.out.println();
     }
 
     public static void perform(final String text, Map<Integer, Integer> param) {
