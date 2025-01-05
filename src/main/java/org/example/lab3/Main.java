@@ -10,8 +10,16 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        SE();
-        MitM();
+        System.out.println(measureExecutionTime(Main::SE));
+        System.out.println(measureExecutionTime(Main::MitM));
+    }
+
+    private static long measureExecutionTime(final Runnable method) {
+        final long startTime = System.currentTimeMillis();
+        method.run();
+        final long endTime = System.currentTimeMillis();
+
+        return endTime - startTime;
     }
 
     public static void MitM() {
