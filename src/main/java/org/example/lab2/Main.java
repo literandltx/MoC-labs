@@ -41,23 +41,20 @@ public class Main {
         // N -- num
         // map is L : N
         final Map<Integer, Integer> param = new TreeMap<>();
-//        param.put(10, 10_000);
-//        param.put(100, 10_000);
-//        param.put(1_000, 10_000);
+        param.put(10, 10_000);
+        param.put(100, 10_000);
+        param.put(1_000, 10_000);
         param.put(10_000, 1_000);
 
         String key1 = "ш";
         String key2 = "шість";
         String key3 = "шістнадцять";
 
-//        printMeanStd(text, param);
-
-//        perform20VigenereLetter(text, param, key1);
-//        perform20VigenereBigram(text, param, key1);
+        performStructure(text, param,  key1);
 
 //        testVigenereAffine(text, param, key1);
 //        testVigenereAffine(text, param, key2);
-        testVigenereAffine(text, param, key3);
+//        testVigenereAffine(text, param, key3);
     }
 
     private static void testVigenereAffine(final String text, final Map<Integer, Integer> param, final String key) {
@@ -377,18 +374,15 @@ public class Main {
         System.out.printf("%-8s %-8s %-8s %-8s %-8s %-8s%n", "LEN", "NUM", "PH0", "PH1", "CH0", "CH1");
 
         for (final var entry : param.entrySet()) {
-            final List<String> texts = getSequentialSubstrings(text, entry.getValue(), entry.getKey());
-            List<String> generatedSequence = generatedSequence(entry.getValue(), entry.getKey(), 1);
+            final List<String> plain = getSequentialSubstrings(text, entry.getValue(), entry.getKey());
+//            List<String> cipher = generatedSequence(entry.getValue(), entry.getKey(), 1);
+            List<String> cipher = affine(plain, 11, 17, 1);
 
-            int L = entry.getKey();
-            int N = entry.getValue();
+            int pH01 = criteriaStructure(plain);
+            int cH01 = criteriaStructure(cipher);
 
-            int pH0 = criteriaStructure(texts);
-            int pH1 = texts.size() - pH0;
-            int cH0 = criteriaStructure(generatedSequence);
-            int cH1 = texts.size() - cH0;
-
-            System.out.printf("%-8d %-8d %-8d %-8d %-8d %-8d%n", L, N, pH0, pH1, cH0, cH1);
+            printResult(entry, pH01, plain.size(), cH01);
+            System.out.println();
         }
 
         System.out.println();

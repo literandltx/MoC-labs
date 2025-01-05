@@ -279,10 +279,15 @@ public class Criteria {
             compressedLength = deflater.deflate(compressedData);
             deflater.end();
 
-//            double mean = 6247.526 / 10_000;
-            double mean = 20;
-            double std = 0;
-//            double std = 455.2213673851438 / 10_000;
+//            double mean =   20.0 / text.length();
+//            double std  =   0.01 / text.length();
+//            double mean =  128.88 / text.length();
+//            double std  =    3.69 / text.length();
+//            double mean =  795.38 / text.length();
+//            double std  =   45.14 / text.length();
+            double mean = 6247.52 / text.length();
+            double std  =  455.22 / text.length();
+
             double minK = (mean - std * 3) * text.length();
             double maxK = (mean + std * 3)  * text.length();
 
