@@ -2,6 +2,8 @@ package org.example.lab2;
 
 import java.util.*;
 
+import static org.example.lab2.cipher.AffineCipher.affine;
+import static org.example.lab2.cipher.SequenceGenerator.generateCorrelationSequence;
 import static org.example.lab2.cipher.SequenceGenerator.generatedSequence;
 import static org.example.lab2.cipher.VigenereCipher.vigenere;
 import static org.example.lab2.criteria.Criteria.*;
@@ -39,16 +41,72 @@ public class Main {
         // N -- num
         // map is L : N
         final Map<Integer, Integer> param = new TreeMap<>();
-        param.put(10, 10_000);
-        param.put(100, 10_000);
-        param.put(1_000, 10_000);
+//        param.put(10, 10_000);
+//        param.put(100, 10_000);
+//        param.put(1_000, 10_000);
         param.put(10_000, 1_000);
 
         String key1 = "ш";
         String key2 = "шість";
         String key3 = "шістнадцять";
 
-        performStructure(text, param, key1);
+//        printMeanStd(text, param);
+
+//        perform20VigenereLetter(text, param, key1);
+//        perform20VigenereBigram(text, param, key1);
+
+//        testVigenereAffine(text, param, key1);
+//        testVigenereAffine(text, param, key2);
+        testVigenereAffine(text, param, key3);
+    }
+
+    private static void testVigenereAffine(final String text, final Map<Integer, Integer> param, final String key) {
+        System.out.printf("%-8s %-8s %-8s %-8s %-8s %-8s%n", "LEN", "NUM", "CH0l1", "CH1l1", "CH0l2", "CH1l2");
+
+        for (final var entry : param.entrySet()) {
+            final List<String> texts = getSequentialSubstrings(text, entry.getValue(), entry.getKey());
+//            final ArrayList<String> cipher1 = vigenere(texts, key);
+//            final ArrayList<String> cipher2 = new ArrayList<>(cipher1);
+//            final List<String> cipher1 = affine(texts, 11, 17, 1);
+//            final List<String> cipher2 = affine(texts, 11, 17, 2);
+//            final List<String> cipher1 = generatedSequence(entry.getKey(), entry.getValue(), 1);
+//            final List<String> cipher2 = generatedSequence(entry.getKey(), entry.getValue(), 2);
+            final List<String> cipher1 = generateCorrelationSequence(entry.getKey(), entry.getValue(), 1);
+            final List<String> cipher2 = generateCorrelationSequence(entry.getKey(), entry.getValue(), 2);
+
+            int size = texts.size();
+
+            int cH0ZeroL1 = criteriaZero(cipher1, text, 1, 1);
+            int cH0ZeroL2 = criteriaZero(cipher2, text, 2, 1);
+            int cH0OneL1 = criteriaOne(cipher1, text, 1, 1);
+            int cH0OneL2 = criteriaOne(cipher2, text, 2, 1);
+            int cH0TwoL1 = criteriaTwo(cipher1, text, 1, 1);
+            int cH0TwoL2 = criteriaTwo(cipher2, text, 2, 1);
+            int cH0ThreeL1 = criteriaThree(cipher1, text, 1, 1);
+            int cH0ThreeL2 = criteriaThree(cipher2, text, 2, 1);
+            int cH0FourL1 = criteriaFour(cipher1, text, 1, 1);
+            int cH0FourL2 = criteriaFour(cipher2, text, 2, 1);
+            int cH0FiveL1 = criteriaFive(cipher1, text, 1, 1);
+            int cH0FiveL2 = criteriaFive(cipher2, text, 2, 1);
+
+            printResult(entry, cH0ZeroL1, size, cH0ZeroL2);
+            printResult(entry, cH0OneL1, size, cH0OneL2);
+            printResult(entry, cH0TwoL1, size, cH0TwoL2);
+            printResult(entry, cH0ThreeL1, size, cH0ThreeL2);
+            printResult(entry, cH0FourL1, size, cH0FourL2);
+            printResult(entry, cH0FiveL1, size, cH0FiveL2);
+
+            System.out.println();
+        }
+    }
+
+    private static void printResult(Map.Entry<Integer, Integer> entry, int pH0L1, int size, int cH0L2) {
+        int percentageCH0L1 = (int) (100 * Math.floor((double) pH0L1 / size * 100) / 100.0);
+        int percentageCH1L1 = (int) (100 * Math.floor((double) (size - pH0L1) / size * 100) / 100.0);
+        int percentageCH0L2 = (int) (100 * Math.floor((double) cH0L2 / size * 100) / 100.0);
+        int percentageCH1L2 = (int) (100 * Math.floor((double) (size - cH0L2) / size * 100) / 100.0);
+
+        System.out.printf("%-8d %-8d %-8d %-8d %-8d %-8d\n", entry.getKey(), entry.getValue(), percentageCH0L1, percentageCH1L1, percentageCH0L2, percentageCH1L2);
     }
 
     private static void perform20VigenereLetter(final String text, final Map<Integer, Integer> param, final String key) {
